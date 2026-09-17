@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Discord Yetkili Başvurusu</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#0b0d12;color:#f5f7fa;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:30px}
+.card{width:min(720px,100%);background:#151922;border:1px solid #292f3d;border-radius:20px;padding:30px;box-shadow:0 20px 60px #0008}
+h1{margin:0 0 8px;font-size:30px}.sub{color:#9da5b4;margin-bottom:28px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.full{grid-column:1/-1}
+label{display:block;margin-bottom:7px;font-weight:700;font-size:14px}
+input,select,textarea{width:100%;background:#0f1218;color:#fff;border:1px solid #303747;border-radius:10px;padding:13px;font-size:15px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#5865f2}textarea{min-height:110px;resize:vertical}
+.check{display:flex;gap:10px;align-items:flex-start;color:#c7ccd6;font-size:14px}.check input{width:auto;margin-top:3px}
+button{width:100%;border:0;border-radius:11px;padding:14px;background:#5865f2;color:white;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px}
+button:hover{background:#4752c4}.note{font-size:12px;color:#777f8e;text-align:center;margin-top:14px}
+#success{display:none;background:#17261c;border:1px solid #2e6b40;color:#b8e7c4;padding:13px;border-radius:10px;margin-bottom:18px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>🛡️ Yetkili Başvurusu</h1>
+<div class="sub">Sunucumuzda yetkili olmak istiyorsan aşağıdaki formu eksiksiz doldur.</div>
+<div id="success">✅ Başvurun hazırlandı! Başvurular Discord kanalına gönderilir.</div>
+<form id="form">
+<div class="grid">
+<div><label>Adın</label><input required name="name" placeholder="Adın"></div>
+<div><label>Discord kullanıcı adın</label><input required name="discord" placeholder="kullaniciadi"></div>
+<div><label>Yaşın</label><input required name="age" type="number" min="13" max="99" placeholder="17"></div>
+<div><label>Günlük aktiflik</label><select required name="active"><option value="">Seç</option><option>1-2 saat</option><option>3-4 saat</option><option>5-6 saat</option><option>7+ saat</option></select></div>
+<div class="full"><label>Daha önce yetkili oldun mu?</label><textarea name="experience" placeholder="Hangi sunucularda, hangi görevlerde?"></textarea></div>
+<div class="full"><label>Neden yetkili olmak istiyorsun?</label><textarea required name="why" placeholder="Kısaca anlat..."></textarea></div>
+<div class="full"><label>Sunucuya nasıl katkı sağlayabilirsin?</label><textarea required name="contribution" placeholder="Örneğin: destek, moderasyon, etkinlik..."></textarea></div>
+<div class="full check"><input required type="checkbox" id="rules"><label for="rules">Sunucu kurallarını okuduğumu ve yetkili olduğumda kurallara uygun davranacağımı kabul ediyorum.</label></div>
+<div class="full"><button type="submit">Başvuruyu Gönder</button></div>
+</div>
+</form>
+<div class="note">Discord Yetkili Başvuru Sistemi</div>
+</div>
+<script>
+document.getElementById('form').addEventListener('submit', async e=>{
+ e.preventDefault();
+ const form = e.target;
+ const data = Object.fromEntries(new FormData(form).entries());
+ const button = form.querySelector('button');
+ button.disabled = true;
+ button.textContent = 'Gönderiliyor...';
+ try {
+   const r = await fetch('/api/apply', {
+     method:'POST',
+     headers:{'Content-Type':'application/json'},
+     body:JSON.stringify(data)
+   });
+   if(!r.ok) throw new Error();
+   document.getElementById('success').textContent='✅ Başvurun Discord kanalına gönderildi!';
+   document.getElementById('success').style.display='block';
+   form.reset();
+   window.scrollTo({top:0,behavior:'smooth'});
+ } catch {
+   alert('Başvuru gönderilemedi. Lütfen daha sonra tekrar deneyin.');
+ } finally {
+   button.disabled = false;
+   button.textContent = 'Başvuruyu Gönder';
+ }
+});
+</script>
+</body>
+</html>
