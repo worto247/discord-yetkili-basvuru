@@ -44,8 +44,7 @@ app.post("/api/apply", async (req, res) => {
     res.status(502).json({ error: "Başvuru Discord'a gönderilemedi." });
   }
 });
-
-app.get("*", (req, res) => {
+app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
